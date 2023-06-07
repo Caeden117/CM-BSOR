@@ -6,9 +6,12 @@ namespace CM_BSOR
     [Plugin("ChroMapper BeatLeader Open Replay Viewer")]
     public class Plugin
     {
-        private OpenReplayController openReplayController = new();
+        private OpenReplayController openReplayController = null!;
 
         [Init]
-        public void Init() => ImageLoader.LoadImages();
+        public void Init()
+        {
+            openReplayController = new();
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace CM_BSOR.Controllers
 
         public OpenReplayController()
         {
-            ExtensionButtons.AddButton(ImageLoader.IconSprite, "Open BeatLeader Replay", PromptForReplay);
+            ExtensionButtons.AddButton(ImageLoader.LoadImage(), "Open BeatLeader Replay", PromptForReplay);
         }
 
         private void PromptForReplay()

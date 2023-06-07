@@ -10,6 +10,7 @@
 	<ItemGroup>
 	  <EmbeddedResource Include="Assets\reaxt" />
 	  <EmbeddedResource Include="Assets\Sabers.saber" />
+	  <EmbeddedResource Include="Images\Icon.png" />
 	</ItemGroup>
 
 	<ItemGroup>
