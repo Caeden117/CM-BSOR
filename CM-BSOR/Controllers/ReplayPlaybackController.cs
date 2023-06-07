@@ -20,7 +20,8 @@ namespace CM_BSOR.Controllers
         public void AssignReplay(SimpleReplay replay)
         {
             activeReplay = replay;
-            lastFrameIndex = -1;
+            lastFrameIndex = 0;
+            lastFrame = activeReplay.Frames[0];
         }
 
         private void Start()
@@ -47,15 +48,26 @@ namespace CM_BSOR.Controllers
 
         private void Update()
         {
+            if (lastFrame == null) return;
+            
             var keyframes = activeReplay.Frames;
             var time = atsc.CurrentSeconds;
 
-            while (lastFrameIndex + 1 < keyframes.Count && time > keyframes[lastFrameIndex + 1].Time)
-            {
-                lastFrame = keyframes[++lastFrameIndex];
-            }
+            var direction = time.CompareTo(lastFrame.Time);
+            var newDirection = direction;
 
-            if (lastFrame == null) return;
+            if (direction == 0) return;
+
+            while (newDirection == direction)
+            {
+                var nextFrameIndex = lastFrameIndex + direction;
+                
+                if (nextFrameIndex < 0 || nextFrameIndex >= keyframes.Count) return;
+
+                lastFrame = keyframes[nextFrameIndex];
+                lastFrameIndex = nextFrameIndex;
+                newDirection = time.CompareTo(lastFrame.Time);
+            }
 
             var nextKeyframeIndex = lastFrameIndex + 1;
 
