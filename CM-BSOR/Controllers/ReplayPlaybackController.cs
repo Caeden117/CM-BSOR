@@ -95,9 +95,10 @@ namespace CM_BSOR.Controllers
         {
             var lerped = LerpPose(in lastPose, in nextPose, in t);
 
+            // Unfortunately, SetPositionAndRotation only applies to world space!
+            //   ...That, and SetLocalPositionAndRotation was added in Unity 2022.1 :(
             transform.localPosition = lerped.position;
             transform.localRotation = lerped.rotation;
-            //transform.SetPositionAndRotation(lerped.position, lerped.rotation);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
