@@ -26,24 +26,32 @@ namespace CM_BSOR.Controllers
 
         private void Start()
         {
+            // Load head and saber assets
             headTransform = SaberLoader.LoadHead().transform;
 
             (var left, var right) = SaberLoader.LoadSabers();
             leftHandTransform = left.transform;
             rightHandTransform = right.transform;
 
+            // Assign ourselves as the parent (makes it easier to move things around)
             headTransform.SetParent(transform, true);
-            headTransform.localScale = 0.75f * Vector3.one;
-
             leftHandTransform.SetParent(transform, true);
             rightHandTransform.SetParent(transform, true);
 
+            // CM scale is different from Beat Saber, try to match as best as we can
             transform.localScale = 4f / 3 * Vector3.one;
             transform.position = LoadInitialMap.PlatformOffset;
+            headTransform.localScale = 0.75f * Vector3.one;
 
             // haha this is stupid but also Stable/Dev interop
             atsc = FindObjectOfType<AudioTimeSyncController>();
-            //atsc = BeatmapObjectContainerCollection.GetCollectionForType(Beatmap.Enums.ObjectType.Note).AudioTimeSyncController;
+
+            // Pre-emptive animations branch support
+            var animationsPlayerTrack = GameObject.Find("Player Camera");
+            if (animationsPlayerTrack != null)
+            {
+                transform.SetParent(animationsPlayerTrack.transform, true);
+            }
         }
 
         private void Update()
