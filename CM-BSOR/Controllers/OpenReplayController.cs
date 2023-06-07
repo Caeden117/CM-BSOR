@@ -1,14 +1,14 @@
 ﻿using CM_BSOR.Helpers;
 using SFB;
-using System;
 using System.IO;
-using System.IO.Pipes;
 using UnityEngine;
 
 namespace CM_BSOR.Controllers
 {
-    internal class OpenReplayController
+    public class OpenReplayController
     {
+        private ReplayPlaybackController playbackController = null!;
+
         public OpenReplayController()
         {
             ExtensionButtons.AddButton(ImageLoader.IconSprite, "Open BeatLeader Replay", PromptForReplay);
@@ -30,17 +30,17 @@ namespace CM_BSOR.Controllers
             using var fileStream = File.OpenRead(fileLocation);
             
             var length = (int)fileStream.Length;
-#if NETSTANDARD2_1_OR_GREATER
-            Debug.LogError("WHAT THE FUCK");
-            Span<byte> buffer = stackalloc byte[length];
-            fileStream.Read(buffer);
-#else
             var buffer = new byte[length];
             fileStream.Read(buffer, 0, length);
-#endif
 
-            if (!BLReplaySimpleDecoder.TryDecode(buffer, out var replay)) return;
+            var replay = BLReplaySimpleDecoder.Decode(buffer)!;
 
+            if (playbackController == null)
+            {
+                playbackController = new GameObject("Replay Playback").AddComponent<ReplayPlaybackController>();
+            }
+
+            playbackController.AssignReplay(replay);
             Debug.LogError($"Replay loaded with {replay.Frames.Count} frames");
         }
     }

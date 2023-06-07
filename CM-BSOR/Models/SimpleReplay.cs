@@ -46,15 +46,13 @@ namespace CM_BSOR.Models
             public float Speed = -1;
         }
 
-        public class Frame : IComparable<Frame>
+        public class Frame
         {
             public float Time;
             public int FPS;
             public Pose Head;
             public Pose LeftHand;
             public Pose RightHand;
-
-            public int CompareTo(Frame other) => Time.CompareTo(other.Time);
         }
     }
 }

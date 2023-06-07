@@ -12,7 +12,7 @@ namespace CM_BSOR.Helpers
         {
             if (saberPrefab == null)
             {
-                using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("CMReplaySuite.ChroMapper.Assets.Sabers.saber");
+                using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("CM_BSOR.Assets.Sabers.saber");
                 
                 var len = (int)stream.Length;
                 var bytes = new byte[len];
@@ -35,7 +35,7 @@ namespace CM_BSOR.Helpers
         {
             if (headPrefab == null)
             {
-                using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("CMReplaySuite.ChroMapper.Assets.reaxt");
+                using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("CM_BSOR.Assets.reaxt");
                 
                 var len = (int)stream.Length;
                 var bytes = new byte[len];
@@ -51,7 +51,13 @@ namespace CM_BSOR.Helpers
 
         private static GameObject CleanupGameObject(GameObject obj)
         {
-            // TODO: Find a way to remove all null components (due to CustomSaber dll not existing)
+            var components = obj.GetComponents<Component>();
+
+            for (var i = 0; i < components.Length; i++)
+            {
+                if (components[i] == null) Object.Destroy(components[i]);
+            }
+
             return obj;
         }
     }
