@@ -170,37 +170,22 @@ namespace CM_BSOR.Helpers
         /// <param name="head">Read head, which automatically gets incremented.</param>
         /// <returns>Decoded player name</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        // What is special with this method?
         private static string DecodePlayerName(byte[] buffer, ref int head)
         {
-            /*
-            var strLength = DecodeInt(buffer, ref head);
+            var length = DecodeInt(buffer, ref head);
 
-            // WTF?????? what is the purpose
-            var offsetHead = head + strLength - 1;
-            int offsetInt;
-            do
+            // WTF?????? what is the purpose of this, beatleader??
+            var lengthOffset = 0;
+            var offsetInt = BitConverter.ToInt32(buffer, length + head);
+            while (offsetInt != 5 && offsetInt != 6 && offsetInt != 8)
             {
-                offsetInt = DecodeInt(buffer, ref offsetHead);
-            } while (offsetInt != 5 && offsetHead != 6 && offsetInt != 8);
+                lengthOffset++;
+                offsetInt = BitConverter.ToInt32(buffer, length + head + lengthOffset);
+            } 
 
-            var result = Encoding.UTF8.GetString(buffer, head, offsetHead - head);
-            head += offsetHead - head;
-            return result;*/
-            int length = BitConverter.ToInt32(buffer, head);
-            int lengthOffset = 0;
-            if (length > 0)
-            {
-                while (BitConverter.ToInt32(buffer, length + head + 4 + lengthOffset) != 6
-                    && BitConverter.ToInt32(buffer, length + head + 4 + lengthOffset) != 5
-                    && BitConverter.ToInt32(buffer, length + head + 4 + lengthOffset) != 8)
-                {
-                    lengthOffset++;
-                }
-            }
-            string @string = Encoding.UTF8.GetString(buffer, head + 4, length + lengthOffset);
-            head += length + 4 + lengthOffset;
-            return @string;
+            var result = Encoding.UTF8.GetString(buffer, head, length + lengthOffset);
+            head += length + lengthOffset;
+            return result;
         }
 
         /// <summary>
