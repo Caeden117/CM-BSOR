@@ -41,7 +41,6 @@ namespace CM_BSOR.Controllers
             }
 
             playbackController.AssignReplay(replay);
-            Debug.LogError($"Replay loaded with {replay.Frames.Count} frames");
         }
     }
 }
