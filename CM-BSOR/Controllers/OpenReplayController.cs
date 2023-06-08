@@ -33,7 +33,11 @@ namespace CM_BSOR.Controllers
             var buffer = new byte[length];
             fileStream.Read(buffer, 0, length);
 
-            var replay = BLReplaySimpleDecoder.Decode(buffer)!;
+            if (!BLReplaySimpleDecoder.TryDecode(buffer, out var replay))
+            {
+                Debug.LogError("This replay file is invalid and cannot be viewed.");
+                return;
+            }
 
             if (playbackController == null)
             {
