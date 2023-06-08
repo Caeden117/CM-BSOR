@@ -7,6 +7,7 @@ namespace CM_BSOR.Controllers
 {
     public class ReplayPlaybackController : MonoBehaviour
     {
+        private GameObject headGameObject = null!;
         private Transform headTransform = null!;
         private Transform leftHandTransform = null!;
         private Transform rightHandTransform = null!;
@@ -16,6 +17,8 @@ namespace CM_BSOR.Controllers
         private SimpleReplay activeReplay = null!;
         private SimpleReplay.Frame lastFrame = null!;
         private int lastFrameIndex = -1;
+
+        private UIModeType currentUIMode = UIModeType.Normal;
 
         public void AssignReplay(SimpleReplay replay)
         {
@@ -27,7 +30,8 @@ namespace CM_BSOR.Controllers
         private void Start()
         {
             // Load head and saber assets
-            headTransform = SaberLoader.LoadHead().transform;
+            headGameObject = SaberLoader.LoadHead();
+            headTransform = headGameObject.transform;
 
             (var left, var right) = SaberLoader.LoadSabers();
             leftHandTransform = left.transform;
@@ -39,12 +43,15 @@ namespace CM_BSOR.Controllers
             rightHandTransform.SetParent(transform, true);
 
             // CM scale is different from Beat Saber, try to match as best as we can
+            // CONTRIBUTOR! This is where scaling gets set, if you want to change the size of the player.
             transform.localScale = 4f / 3 * Vector3.one;
             transform.position = LoadInitialMap.PlatformOffset;
             headTransform.localScale = 0.75f * Vector3.one;
 
             // haha this is stupid but also Stable/Dev interop
             atsc = FindObjectOfType<AudioTimeSyncController>();
+
+            UIMode.UIModeSwitched += OnUIModeSwitched;
 
             // Pre-emptive animations branch support
             var animationsPlayerTrack = GameObject.Find("Player Camera");
@@ -85,11 +92,27 @@ namespace CM_BSOR.Controllers
 
             var t = (time - lastFrame.Time) / (nextKeyframe.Time - lastFrame.Time);
 
-            LerpIntoTransform(headTransform, in lastFrame.Head, in nextKeyframe.Head, in t);
+            // Update head transform iff the cursor is unlcocked
+            if (currentUIMode != UIModeType.Playing)
+            {
+                LerpIntoTransform(headTransform, in lastFrame.Head, in nextKeyframe.Head, in t);
+            }
+
             LerpIntoTransform(leftHandTransform, in lastFrame.LeftHand, in nextKeyframe.LeftHand, in t);
             LerpIntoTransform(rightHandTransform, in lastFrame.RightHand, in nextKeyframe.RightHand, in t);
         }
-        
+
+        private void OnUIModeSwitched(UIModeType newUIMode)
+        {
+            currentUIMode = newUIMode;
+            headGameObject.SetActive(currentUIMode != UIModeType.Playing);
+        }
+
+        private void OnDestroy()
+        {
+            UIMode.UIModeSwitched -= OnUIModeSwitched;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LerpIntoTransform(Transform transform, in Pose lastPose, in Pose nextPose, in float t)
         {
