@@ -6,6 +6,10 @@ A [ChroMapper](https://github.com/Caeden117/ChroMapper) plugin designed for open
 
 To install CM-BSOR, download the latest version of the plugin from [Releases](https://github.com/Caeden117/CM-BSOR/releases) and download the `CM-BSOR.dll` file to the `Plugins` subfolder of your ChroMapper installation.
 
+## Usage
+
+While editing a map, click on the `Open BeatLeader Replay` button on the right menu bar, then open a valid `.bsor` file.
+
 ## Notes
 
 - The scale of notes in ChroMapper is **not** the same as the scale of notes in Beat Saber. Exact saber positions and note cuts will not be accurate compared to viewing a replay in Beat Saber.
